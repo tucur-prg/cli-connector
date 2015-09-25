@@ -32,12 +32,13 @@ public class Couchbase extends Monitor {
         out.println("");
         out.println("Couchbase command:");
         out.println("");
-        out.println("open <host> <username>");
+        out.println("open <host>");
         out.println("use <bucketName>");
         out.println("set <key> <value>");
         out.println("get <key>");
         out.println("delete <key>");
         out.println("query <design> <view>");
+        out.println("login <username>");
         out.println("show buckets");
         out.println("show info");
     }
@@ -45,17 +46,12 @@ public class Couchbase extends Monitor {
     protected void doCommand(String cmd, String... args) throws Exception {
         String subCommand;
         String[] arguments;
+        char[] password;
 
         switch (cmd) {
             case "open":
                 if (args.length < 1) {
                     throw new IllegalArgumentException("invalid arguments");
-                }
-
-                if (args.length == 2) {
-                    char[] password = c.readPassword("Password: ");
-
-                    conn.settings(args[1], String.valueOf(password));
                 }
 
                 conn.open(args[0]);
@@ -65,7 +61,7 @@ public class Couchbase extends Monitor {
                     throw new IllegalArgumentException("invalid arguments");
                 }
 
-                char[] password = c.readPassword("Bucket Password: ");
+                password = c.readPassword("Bucket Password: ");
 
                 conn.openBucket(args[0], String.valueOf(password));
                 targetBucket = args[0];
@@ -103,6 +99,15 @@ public class Couchbase extends Monitor {
                 }
 
                 conn.query(args[0], args[1]);
+                break;
+            case "login":
+                if (args.length < 1) {
+                    throw new IllegalArgumentException("invalid arguments");
+                }
+
+                password = c.readPassword("Password: ");
+
+                conn.login(args[0], String.valueOf(password));
                 break;
             case "show":
                 subCommand = args[0].toLowerCase();

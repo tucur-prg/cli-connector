@@ -33,10 +33,9 @@ public class Rabbitmq extends Monitor {
         out.println("");
         out.println("open <host> [user]");
         out.println("use <queueName>");
-        out.println("durable <on/off>");
-        out.println("exclusive <on/off>");
-        out.println("autoDelete <on/off>");
+        out.println("create <queueName> <durable:on/off> <exclusive:on/off> <autoDelete:on/off>");
         out.println("set <message>");
+        out.println("dset <message>");
         out.println("get");
     }
 
@@ -65,26 +64,12 @@ public class Rabbitmq extends Monitor {
                 conn.queue(args[0]);
                 queueName = args[0];
                 break;
-            case "durable":
-                if (args.length < 1) {
+            case "create":
+                if (args.length < 4) {
                     throw new IllegalArgumentException("invalid arguments");
                 }
 
-                conn.durable("on".equals(args[0]));
-                break;
-            case "exclusive":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                conn.exclusive("on".equals(args[0]));
-                break;
-            case "autoDelete":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                conn.autoDelete("on".equals(args[0]));
+                conn.createQueue(args[0], "on".equals(args[1]), "on".equals(args[2]), "on".equals(args[3]));
                 break;
             case "set":
                 if (args.length < 1) {
@@ -96,6 +81,17 @@ public class Rabbitmq extends Monitor {
                 }
 
                 conn.set(queueName, String.join(" ", args));
+                break;
+            case "dset":
+                if (args.length < 1) {
+                    throw new IllegalArgumentException("invalid arguments");
+                }
+
+                if (queueName == null) {
+                    throw new IllegalArgumentException("set queueName");
+                }
+
+                conn.dset(queueName, String.join(" ", args));
                 break;
             case "get":
                 if (queueName == null) {

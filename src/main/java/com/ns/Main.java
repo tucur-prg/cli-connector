@@ -31,7 +31,7 @@ public class Main {
         out.println("Type 'help' for help");
         out.println("");
 
-        Monitor monitor = changeMonitor("rabbitmq");
+        Monitor monitor = changeMonitor("base");
 
         while (true) {
             String line = monitor.read().trim();

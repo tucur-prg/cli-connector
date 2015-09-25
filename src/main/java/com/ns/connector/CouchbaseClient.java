@@ -32,9 +32,6 @@ public class CouchbaseClient {
 
     private String hostname;
 
-    private String username;
-    private String password;
-
     public void open(String host) {
         Logger.getLogger("com.couchbase.client").setLevel(Level.OFF);
 
@@ -49,9 +46,6 @@ public class CouchbaseClient {
 
     protected void connect() {
         cluster = CouchbaseCluster.create(env, hostname);
-        if (username != null && password != null) {
-            manager = cluster.clusterManager(username, password);
-        }
     }
 
     public void close() {
@@ -63,9 +57,8 @@ public class CouchbaseClient {
         }
     }
 
-    public void settings(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public void login(String username, String password) {
+        manager = cluster.clusterManager(username, password);
     }
 
     public void openBucket(String name, String password) {
