@@ -2,8 +2,6 @@ package com.ns.connector;
 
 import java.util.List;
 import java.util.Iterator;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.concurrent.TimeUnit;
 
 import com.couchbase.client.java.CouchbaseCluster;
@@ -33,8 +31,6 @@ public class CouchbaseClient {
     private String hostname;
 
     public void open(String host) {
-        Logger.getLogger("com.couchbase.client").setLevel(Level.OFF);
-
         hostname = host;
         env = DefaultCouchbaseEnvironment.builder()
                 .connectTimeout(TimeUnit.SECONDS.toMillis(10))
