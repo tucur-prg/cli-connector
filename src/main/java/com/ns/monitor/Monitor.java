@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.Console;
 import java.io.IOException;
 
+import java.lang.Character;
+
 import jline.console.ConsoleReader;
 import jline.console.history.FileHistory;
 
@@ -11,7 +13,7 @@ import static java.lang.System.out;
 
 public abstract class Monitor {
     protected ConsoleReader c;
-    protected Console p = System.console();
+    protected Character mask = new Character('*');
 
     Monitor() {
         try {

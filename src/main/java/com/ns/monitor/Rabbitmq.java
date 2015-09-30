@@ -40,7 +40,6 @@ public class Rabbitmq extends Monitor {
     }
 
     protected void doCommand(String cmd, String... args) throws Exception {
-//        String subCommand;
         String[] arguments;
 
         switch (cmd) {
@@ -50,8 +49,8 @@ public class Rabbitmq extends Monitor {
                 }
 
                 if (args.length == 2) {
-                    char[] password = p.readPassword("Password: ");
-                    conn.settings(args[1], String.valueOf(password));
+                    String password = c.readLine("Password: ", mask);
+                    conn.settings(args[1], password);
                 }
 
                 conn.open(args[0]);

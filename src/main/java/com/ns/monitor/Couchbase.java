@@ -15,7 +15,7 @@ public class Couchbase extends Monitor {
 
     public String read() throws IOException {
         if (targetBucket != null) {
-            return c.readLine(String.format("couchbase:%s>", targetBucket));
+            return c.readLine(String.format("couchbase:%s> ", targetBucket));
         }
 
         return c.readLine("couchbase> ");
@@ -46,7 +46,8 @@ public class Couchbase extends Monitor {
     protected void doCommand(String cmd, String... args) throws Exception {
         String subCommand;
         String[] arguments;
-        char[] password;
+//        char[] password;
+        String password;
 
         switch (cmd) {
             case "open":
@@ -61,9 +62,8 @@ public class Couchbase extends Monitor {
                     throw new IllegalArgumentException("invalid arguments");
                 }
 
-                password = p.readPassword("Bucket Password: ");
-
-                conn.openBucket(args[0], String.valueOf(password));
+                password = c.readLine("Bucket Password: ", mask);
+                conn.openBucket(args[0], password);
                 targetBucket = args[0];
                 break;
             case "set":
@@ -105,9 +105,8 @@ public class Couchbase extends Monitor {
                     throw new IllegalArgumentException("invalid arguments");
                 }
 
-                password = p.readPassword("Password: ");
-
-                conn.login(args[0], String.valueOf(password));
+                password = c.readLine("Password: ", mask);
+                conn.login(args[0], password);
                 break;
             case "show":
                 subCommand = args[0].toLowerCase();
