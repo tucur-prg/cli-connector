@@ -50,7 +50,7 @@ public class Rabbitmq extends Monitor {
                 }
 
                 if (args.length == 2) {
-                    char[] password = c.readPassword("Password: ");
+                    char[] password = p.readPassword("Password: ");
                     conn.settings(args[1], String.valueOf(password));
                 }
 

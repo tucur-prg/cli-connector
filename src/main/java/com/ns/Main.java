@@ -14,12 +14,6 @@ import static java.lang.System.out;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        Console c = System.console();
-        if (c == null) {
-            System.err.println("No console.");
-            System.exit(0);
-        }
-
         InputStream is = ClassLoader.getSystemResourceAsStream("main.properties");
         Properties configuration = new Properties();
         configuration.load(is);

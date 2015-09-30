@@ -61,7 +61,7 @@ public class Couchbase extends Monitor {
                     throw new IllegalArgumentException("invalid arguments");
                 }
 
-                password = c.readPassword("Bucket Password: ");
+                password = p.readPassword("Bucket Password: ");
 
                 conn.openBucket(args[0], String.valueOf(password));
                 targetBucket = args[0];
@@ -105,7 +105,7 @@ public class Couchbase extends Monitor {
                     throw new IllegalArgumentException("invalid arguments");
                 }
 
-                password = c.readPassword("Password: ");
+                password = p.readPassword("Password: ");
 
                 conn.login(args[0], String.valueOf(password));
                 break;

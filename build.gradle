@@ -12,7 +12,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 group = 'com.ns'
-version = '0.2.0'
+version = '0.3.0'
 
 mainClassName = 'com.ns.Main'
 
@@ -24,6 +24,11 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
+    // Console
+    compile (
+        'jline:jline:2.13',
+    )
+
     // Couchbase
     compile (
         'com.couchbase.client:java-client:2.2.0',

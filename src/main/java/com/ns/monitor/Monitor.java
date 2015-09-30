@@ -1,18 +1,45 @@
 package com.ns.monitor;
 
+import java.io.File;
 import java.io.Console;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+
+import jline.console.ConsoleReader;
+import jline.console.history.FileHistory;
 
 import static java.lang.System.out;
 
 public abstract class Monitor {
-    protected Console c = System.console();
+    protected ConsoleReader c;
+    protected Console p = System.console();
 
     Monitor() {
-        if (c == null) {
-            System.err.println("No console.");
+        try {
+            c = new ConsoleReader(System.in, System.err);
+            if (c == null) {
+                System.err.println("No console.");
+                System.exit(0);
+            }
+
+            final FileHistory history = new FileHistory(new File(System.getProperty("user.home"), ".cli_history"));
+            c.setHistory(history);
+
+            Runtime.getRuntime().addShutdownHook(
+                new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                history.flush();
+                            } catch (java.io.IOException e) {
+                                System.err.println("Failed to flush command history! " + e);
+                            }
+                        }
+                    }
+                )
+            );
+        } catch (IOException e) {
+            System.err.println("ERROR: " + e.getMessage());
             System.exit(0);
         }
     }
