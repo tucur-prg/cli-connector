@@ -53,27 +53,31 @@ public class RabbitmqClient {
         }
     }
 
-    public void queue(String queueName) throws Exception {
+    public void queue(String queueName) {
         this.queueName = queueName;
+    }
+
+    public String getQueueName() {
+        return this.queueName;
     }
 
     public void createQueue(String queueName, boolean durable, boolean exclusive, boolean autoDelete) throws Exception {
         channel.queueDeclare(queueName, durable, exclusive, autoDelete, null);
     }
 
-    public void set(String queueName, String message) throws Exception {
+    public void set(String message) throws Exception {
         channel.basicPublish("", queueName, null, message.getBytes());
 
         out.println("Send: " + message);
     }
 
-    public void dset(String queueName, String message) throws Exception {
+    public void dset(String message) throws Exception {
         channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 
         out.println("Send: " + message);
     }
 
-    public void get(String queueName) throws Exception {
+    public void get() throws Exception {
         QueueingConsumer consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
 

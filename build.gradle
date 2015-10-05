@@ -1,18 +1,9 @@
-/*
-task copyDependencies << {
-    new File('src/main/lib').mkdirs()
 
-    copy {
-        from configurations.runtime
-        into 'src/main/lib'
-    }
-}
-*/
 apply plugin: 'java'
 apply plugin: 'application'
 
 group = 'com.ns'
-version = '0.3.2'
+version = '0.3.4'
 
 mainClassName = 'com.ns.Main'
 

@@ -2,7 +2,13 @@ package com.ns.monitor;
 
 import java.io.IOException;
 
+import jline.console.ConsoleReader;
+
 public class Base extends Monitor {
+    Base(ConsoleReader input) {
+        super(input);
+    }
+
     public String read() throws IOException {
         return c.readLine("connector> ");
     }
@@ -11,6 +17,6 @@ public class Base extends Monitor {
     }
 
     protected void doCommand(String cmd, String... args) throws Exception {
-        System.out.println("ERROR: " + cmd + ": command not found");
+        throw new IllegalArgumentException(cmd + ": command not found");
     }
 }

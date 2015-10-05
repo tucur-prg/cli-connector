@@ -30,6 +30,8 @@ public class CouchbaseClient {
 
     private String hostname;
 
+    private boolean isConnection = false;
+
     public void open(String host) {
         hostname = host;
         env = DefaultCouchbaseEnvironment.builder()
@@ -42,14 +44,20 @@ public class CouchbaseClient {
 
     protected void connect() {
         cluster = CouchbaseCluster.create(env, hostname);
+
+        isConnection = true;
     }
 
     public void close() {
-        if (bucket != null) {
-            bucket.close();
-        }
-        if (cluster != null) {
-            cluster.disconnect();
+        if (isConnection) {
+            if (bucket != null) {
+                bucket.close();
+            }
+            if (cluster != null) {
+                cluster.disconnect();
+            }
+
+            isConnection = false;
         }
     }
 
@@ -81,6 +89,18 @@ public class CouchbaseClient {
         while (iter.hasNext()) {
             out.println(iter.next());
         }
+    }
+
+    public void bucket() {
+        out.println(bucket.bucketManager().info().raw());
+    }
+
+    public String bucketName() {
+        if (bucket == null) {
+            return null;
+        }
+
+        return bucket.name();
     }
 
     public void bucketList() {

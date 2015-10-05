@@ -1,138 +1,41 @@
 package com.ns.monitor;
 
-import java.lang.IllegalArgumentException;
-
 import java.io.IOException;
+
+import jline.console.ConsoleReader;
 
 import com.ns.connector.CouchbaseClient;
 
-import static java.lang.System.out;
+import com.ns.monitor.command.couchbase.*;
 
 public class Couchbase extends Monitor {
-    private CouchbaseClient conn = new CouchbaseClient();
+    private CouchbaseClient client = new CouchbaseClient();
 
-    private String targetBucket;
+    Couchbase(ConsoleReader input) {
+        super(input);
+    }
 
     public String read() throws IOException {
-        if (targetBucket != null) {
-            return c.readLine(String.format("couchbase:%s> ", targetBucket));
+        String bucketName = client.bucketName();
+        if (bucketName != null) {
+            return c.readLine(String.format("couchbase:%s> ", bucketName));
         }
 
         return c.readLine("couchbase> ");
     }
 
     public void shutdown() throws Exception {
-        conn.close();
+        client.close();
     }
 
     @Override
     public void help() {
         super.help();
-
-        out.println("");
-        out.println("Couchbase command:");
-        out.println("");
-        out.println("open <host>");
-        out.println("use <bucketName>");
-        out.println("set <key> <value>");
-        out.println("get <key>");
-        out.println("delete <key>");
-        out.println("query <design> <view>");
-        out.println("login <username>");
-        out.println("show buckets");
-        out.println("show info");
+        CommandFactory.help();
     }
 
     protected void doCommand(String cmd, String... args) throws Exception {
-        String subCommand;
-        String[] arguments;
-//        char[] password;
-        String password;
-
-        switch (cmd) {
-            case "open":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                conn.open(args[0]);
-                break;
-            case "use":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                password = c.readLine("Bucket Password: ", mask);
-                conn.openBucket(args[0], password);
-                targetBucket = args[0];
-                break;
-            case "set":
-                if (args.length < 2) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                arguments = new String[0];
-                if (args.length > 2) {
-                    arguments = new String[args.length - 1];
-                    System.arraycopy(args, 1, arguments, 0, arguments.length);
-                }
-
-                conn.set(args[0], String.join(" ", arguments));
-                break;
-            case "get":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                conn.get(args[0]);
-                break;
-            case "delete":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                conn.delete(args[0]);
-                break;
-            case "query":
-                if (args.length < 2) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                conn.query(args[0], args[1]);
-                break;
-            case "login":
-                if (args.length < 1) {
-                    throw new IllegalArgumentException("invalid arguments");
-                }
-
-                password = c.readLine("Password: ", mask);
-                conn.login(args[0], password);
-                break;
-            case "show":
-                subCommand = args[0].toLowerCase();
-                arguments = new String[0];
-                if (args.length > 1) {
-                    arguments = new String[args.length - 1];
-                    System.arraycopy(args, 1, arguments, 0, arguments.length);
-                }
-
-                doShowCommand(subCommand, arguments);
-                break;
-            default:
-                throw new IllegalArgumentException(cmd + ": command not found");
-        }
-    }
-
-    protected void doShowCommand(String cmd, String... args) throws Exception {
-        switch (cmd) {
-            case "buckets":
-                conn.bucketList();
-                break;
-            case "info":
-                conn.info();
-                break;
-            default:
-                throw new IllegalArgumentException("show " + cmd + ": command not found");
-        }
+        Command command = CommandFactory.doCommand(cmd);
+        command.setClient(client).setConsole(c).execute(args);
     }
 }
