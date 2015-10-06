@@ -4,13 +4,14 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.AMQP;
 
 import static java.lang.System.out;
 
 public class RabbitmqClient {
     private Connection connection;
     private Channel channel;
+    private QueueingConsumer consumer;
 
     private String hostname;
 
@@ -42,6 +43,7 @@ public class RabbitmqClient {
 
         connection = factory.newConnection();
         channel = connection.createChannel();
+        consumer = new QueueingConsumer(channel);
     }
 
     public void close() throws Exception {
@@ -65,20 +67,17 @@ public class RabbitmqClient {
         channel.queueDeclare(queueName, durable, exclusive, autoDelete, null);
     }
 
-    public void set(String message) throws Exception {
-        channel.basicPublish("", queueName, null, message.getBytes());
-
-        out.println("Send: " + message);
+    public void bind(String queueName, String exchangeName) throws Exception {
+        channel.queueBind(queueName, exchangeName, "");
     }
 
-    public void dset(String message) throws Exception {
-        channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+    public void set(String exchangeName, String queueName, AMQP.BasicProperties prop, String message) throws Exception {
+        channel.basicPublish(exchangeName, queueName, prop, message.getBytes());
 
         out.println("Send: " + message);
     }
 
     public void get() throws Exception {
-        QueueingConsumer consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
 
         QueueingConsumer.Delivery delivery = consumer.nextDelivery(3);
