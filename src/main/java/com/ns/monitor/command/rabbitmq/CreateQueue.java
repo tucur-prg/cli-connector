@@ -1,6 +1,6 @@
 package com.ns.monitor.command.rabbitmq;
 
-public class Create extends Connector implements Command {
+public class CreateQueue extends Connector implements Command {
     public void execute(String[] args) throws Exception {
         if (args.length < 4) {
             throw new IllegalArgumentException("invalid arguments");

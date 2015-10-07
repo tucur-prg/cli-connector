@@ -67,8 +67,20 @@ public class RabbitmqClient {
         channel.queueDeclare(queueName, durable, exclusive, autoDelete, null);
     }
 
-    public void bind(String queueName, String exchangeName) throws Exception {
-        channel.queueBind(queueName, exchangeName, "");
+    public void createExchange(String exchangeName, String type, boolean durable) throws Exception {
+        channel.exchangeDeclare(exchangeName, type, durable);
+    }
+
+    public void bindQueue(String queueName, String exchangeName, String routingKey) throws Exception {
+        channel.queueBind(queueName, exchangeName, routingKey);
+    }
+
+    public void unbindQueue(String queueName, String exchangeName, String routingKey) throws Exception {
+        channel.queueUnbind(queueName, exchangeName, routingKey);
+    }
+
+    public void deleteQueue(String queueName) throws Exception {
+        channel.queueDelete(queueName);
     }
 
     public void set(String exchangeName, String queueName, AMQP.BasicProperties prop, String message) throws Exception {

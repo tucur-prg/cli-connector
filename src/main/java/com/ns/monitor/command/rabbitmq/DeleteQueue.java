@@ -1,11 +1,11 @@
 package com.ns.monitor.command.rabbitmq;
 
-public class Bind extends Connector implements Command {
+public class DeleteQueue extends Connector implements Command {
     public void execute(String[] args) throws Exception {
-        if (args.length < 2) {
+        if (args.length < 1) {
             throw new IllegalArgumentException("invalid arguments");
         }
 
-        this.client.bind(args[0], args[1]);
+        this.client.deleteQueue(args[0]);
     }
 }
