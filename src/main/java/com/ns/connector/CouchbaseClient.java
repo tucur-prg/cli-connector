@@ -15,10 +15,14 @@ import com.couchbase.client.java.env.CouchbaseEnvironment;
 import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 
 import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.document.LegacyDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewRow;
+
+import com.couchbase.client.java.query.N1qlQuery;
+import com.couchbase.client.java.query.N1qlQueryRow;
 
 import static java.lang.System.out;
 
@@ -70,8 +74,12 @@ public class CouchbaseClient {
     }
 
     public void set(String key, String value) {
-        JsonObject content = JsonObject.fromJson(value);
-        JsonDocument doc = JsonDocument.create(key, content);
+//        JsonObject content = JsonObject.fromJson(value);
+//        JsonDocument doc = JsonDocument.create(key, content);
+
+        // PHP 5.2.17 で利用する php-ext-couchbase 1.1.2 のバージョンだとLegacyDocumentでないと
+        // flagsの構造の違いでデータの取得ができない
+        LegacyDocument doc = LegacyDocument.create(key, value);
 
         out.println(bucket.upsert(doc));
     }
@@ -89,6 +97,13 @@ public class CouchbaseClient {
         while (iter.hasNext()) {
             out.println(iter.next());
         }
+    }
+
+    public void sql(String sql) {
+      Iterator<N1qlQueryRow> iter = bucket.query(N1qlQuery.simple(sql)).rows();
+      while (iter.hasNext()) {
+          out.println(iter.next());
+      }
     }
 
     public void bucket() {

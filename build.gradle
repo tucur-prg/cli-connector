@@ -3,7 +3,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 group = 'com.ns'
-version = '0.3.6'
+version = '0.3.7'
 
 mainClassName = 'com.ns.Main'
 
@@ -27,10 +27,10 @@ dependencies {
 
     // Couchbase
     compile (
-        'com.couchbase.client:java-client:2.2.0',
+        'com.couchbase.client:java-client:2.2.1',
     )
     runtime (
-        'com.couchbase.client:core-io:1.2.0',
+        'com.couchbase.client:core-io:1.2.1',
         'io.reactivex:rxjava:1.0.2',
     )
 

@@ -14,9 +14,12 @@ public class CommandFactory {
         out.println("use <bucketName>");
         out.println("set <key> <value>");
         out.println("get <key>");
-        out.println("delete <key>");
+        out.println("del <key>");
         out.println("query <design> <view>");
         out.println("login <username>");
+        out.println("");
+        out.println("N1QL:");
+        out.println(" SELECT * FROM `beer-sample` LIMIT 5");
 
         ShowCommandFactory.help();
     }
@@ -33,10 +36,24 @@ public class CommandFactory {
                 return new Set();
             case "get":
                 return new Get();
-            case "delete":
+            case "del":
                 return new Delete();
             case "query":
                 return new Query();
+            case "explain":
+            case "select":
+            case "build":
+            case "create":
+            case "drop":
+            case "inset":
+            case "update":
+            case "upsert":
+            case "delete":
+            case "merge":
+            case "prepare":
+                Sql sql = new Sql();
+                sql.setCommand(cmd);
+                return sql;
             case "login":
                 return new Login();
             case "show":
