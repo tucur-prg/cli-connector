@@ -45,7 +45,7 @@ public class CommandFactory {
             case "build":
             case "create":
             case "drop":
-            case "inset":
+            case "insert":
             case "update":
             case "upsert":
             case "delete":
