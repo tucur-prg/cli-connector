@@ -1,8 +1,12 @@
 package com.ns.connector;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.Cluster;
@@ -27,6 +31,8 @@ import com.couchbase.client.java.query.N1qlQueryRow;
 import static java.lang.System.out;
 
 public class CouchbaseClient {
+    private static Logger logger = LoggerFactory.getLogger(CouchbaseClient.class);
+
     private CouchbaseEnvironment env;
     private Cluster cluster;
     private ClusterManager manager;
@@ -47,7 +53,10 @@ public class CouchbaseClient {
     }
 
     protected void connect() {
-        cluster = CouchbaseCluster.create(env, hostname);
+        List<String> nodes = Arrays.asList(hostname.split(","));
+        logger.info("connection nodes: {}", nodes);
+
+        cluster = CouchbaseCluster.create(env, nodes);
 
         isConnection = true;
     }
@@ -56,9 +65,11 @@ public class CouchbaseClient {
         if (isConnection) {
             if (bucket != null) {
                 bucket.close();
+                bucket = null;
             }
             if (cluster != null) {
                 cluster.disconnect();
+                cluster = null;
             }
 
             isConnection = false;
@@ -70,13 +81,15 @@ public class CouchbaseClient {
     }
 
     public void openBucket(String name, String password) {
+        if (bucket != null) {
+            bucket.close();
+            bucket = null;
+        }
+
         bucket = cluster.openBucket(name, password);
     }
 
     public void set(String key, String value) {
-//        JsonObject content = JsonObject.fromJson(value);
-//        JsonDocument doc = JsonDocument.create(key, content);
-
         // PHP 5.2.17 で利用する php-ext-couchbase 1.1.2 のバージョンだとLegacyDocumentでないと
         // flagsの構造の違いでデータの取得ができない
         LegacyDocument doc = LegacyDocument.create(key, value);
@@ -104,6 +117,14 @@ public class CouchbaseClient {
       while (iter.hasNext()) {
           out.println(iter.next());
       }
+    }
+
+    public void flush() {
+        long start = System.currentTimeMillis();
+        bucket.bucketManager().flush();
+        long time = System.currentTimeMillis() - start;
+
+        out.println("bucket flush (" + String.valueOf(time) + " msec).");
     }
 
     public void bucket() {

@@ -4,11 +4,15 @@ import java.io.IOException;
 
 import java.lang.Character;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jline.console.ConsoleReader;
 
 import static java.lang.System.out;
 
 public abstract class Monitor {
+    private static Logger logger = LoggerFactory.getLogger(Monitor.class);
     protected ConsoleReader c;
 
     Monitor(ConsoleReader input) {
@@ -23,6 +27,7 @@ public abstract class Monitor {
             try {
                 doCommand(cmd, args);
             } catch (Exception e) {
+                logger.error("exception", e);
                 out.println("ERROR: " + e.getMessage());
             }
         }

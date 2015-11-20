@@ -6,6 +6,9 @@ import java.io.InputStream;
 
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.ns.monitor.Monitor;
 import com.ns.monitor.MonitorFactory;
 
@@ -15,6 +18,8 @@ import jline.console.history.FileHistory;
 import static java.lang.System.out;
 
 public class Main {
+    private static Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) throws Exception {
         InputStream is = ClassLoader.getSystemResourceAsStream("main.properties");
         Properties configuration = new Properties();
@@ -28,7 +33,12 @@ public class Main {
         }
 
         try {
-            final FileHistory history = new FileHistory(new File(System.getProperty("user.home"), configuration.getProperty("history_path")));
+            File file = new File(System.getProperty("user.home"), configuration.getProperty("base_path"));
+            if (file.exists()) {
+              file.mkdir();
+            }
+
+            final FileHistory history = new FileHistory(new File(System.getProperty("user.home"), configuration.getProperty("base_path") + configuration.getProperty("history_file")));
             input.setHistory(history);
 
             Runtime.getRuntime().addShutdownHook(
@@ -46,6 +56,7 @@ public class Main {
                 )
             );
         } catch (IOException e) {
+            logger.error("command history", e);
             System.err.println("ERROR: " + e);
             System.exit(0);
         }

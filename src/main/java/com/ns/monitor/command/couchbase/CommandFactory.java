@@ -56,6 +56,8 @@ public class CommandFactory {
                 return sql;
             case "login":
                 return new Login();
+            case "flush":
+                return new Flush();
             case "show":
                 return new Show();
             default:

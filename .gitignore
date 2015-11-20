@@ -1,7 +1,8 @@
 # Created by https://www.gitignore.io/api/java,linux,osx,windows
 
 ### Org ###
-
+logs/
+*.log
 
 ### Java ###
 *.class

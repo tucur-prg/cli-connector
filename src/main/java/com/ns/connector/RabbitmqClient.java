@@ -53,6 +53,8 @@ public class RabbitmqClient {
         if (connection != null) {
             connection.close();
         }
+
+        queueName = null;
     }
 
     public void queue(String queueName) {
